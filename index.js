@@ -26,7 +26,6 @@ app.post('/', (req, res) => {
     } catch (error) {
         res.sendFile(path.join(__dirname, '/wrongcommand.html'))
     }
-    
 })
 
 function getFlag() {
