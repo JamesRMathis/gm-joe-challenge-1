@@ -1,4 +1,5 @@
 const express = require('express')
+const ejs = require('ejs')
 const bodyParser = require('body-parser')
 const path = require('path')
 
@@ -8,28 +9,46 @@ const port = process.env.PORT || 3001
 app.use(bodyParser.urlencoded({extended: true}))
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/index.html'))
+    res.sendFile(path.join(__dirname, '/views/index.html'))
 })
 
 app.post('/', (req, res) => {
-    let input = req.body['num'] + ''
-    let command = ''
+    let input = req.body['input']
 
-    for (let i = 0; i < input.length; i+=3) {
-        let char = String.fromCharCode(parseInt(input.charAt(i) + input.charAt(i + 1) + input.charAt(i + 2)))
+    let re = /\^\/\(\d+, \d+\)/g
+    let badRE = /\^\/\(\)/g
 
-        command += char
+    if (input.match(badRE)) {
+        res.render(path.join(__dirname, '/views/badInput.ejs'), {'expression': input})
+    }
+    
+    if (input.match(re)) {
+        input = input.replaceAll('^/', 'root')
     }
 
     try {
-        res.send(eval(command))
+        if (input == 0) throw new Error
+        let output = eval(input)
+
+        if (input.contains('root')) {
+            input = input.replaceAll('root', '^/')
+        }
+
+        res.render(path.join(__dirname, '/views/output.ejs'), {'expression': input, 'result': output})
     } catch (error) {
-        res.sendFile(path.join(__dirname, '/wrongcommand.html'))
+        res.render(path.join(__dirname, '/views/badInput.ejs'), {'expression': input})
     }
 })
 
-function getFlag() {
-    return 'FLAG{PLEASE_DONT_USE_EVAL_WITH_USER_INPUT}'
+function root(num, index) {
+    try {
+        result = Math.pow(num, 1/index)
+        if (isNaN(result)) throw new Error
+
+        return result
+    } catch (error) {
+        return 'FLAG{PLEASE_DONT_USE_EVAL_WITH_USER_INPUT}'
+    }
 }
 
 app.listen(port, () => {
