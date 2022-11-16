@@ -30,7 +30,7 @@ app.post('/', (req, res) => {
         if (input == 0) throw new Error
         let output = eval(input)
 
-        if (input.contains('root')) {
+        if (input.match(/root/g)) {
             input = input.replaceAll('root', '^/')
         }
 
