@@ -15,14 +15,18 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
     let input = req.body['input']
 
+    console.log(input);
+
     let re = /\^\/\(\d+, \d+\)/g
     let badRE = /\^\/\(\)/g
 
     if (input.match(badRE)) {
+        console.log('found bad root');
         res.render(path.join(__dirname, '/views/badInput.ejs'), {'expression': input})
     }
     
     if (input.match(re)) {
+        console.log('replacing ^/ with root');
         input = input.replaceAll('^/', 'root')
     }
 
@@ -31,8 +35,11 @@ app.post('/', (req, res) => {
         let output = eval(input)
 
         if (input.match(/root/g)) {
+            console.log('replacing root with ^/');
             input = input.replaceAll('root', '^/')
         }
+
+        console.log(output);
 
         res.render(path.join(__dirname, '/views/output.ejs'), {'expression': input, 'result': output})
     } catch (error) {
@@ -41,6 +48,8 @@ app.post('/', (req, res) => {
 })
 
 function root(num, index) {
+    console.log('taking the root');
+
     try {
         result = Math.pow(num, 1/index)
         if (isNaN(result)) throw new Error
