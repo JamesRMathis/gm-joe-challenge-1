@@ -27,7 +27,7 @@ app.post('/', (req, res) => {
     
     if (input.match(re)) {
         console.log('replacing ^/ with root');
-        input = input.replaceAll('^/', 'root')
+        input = input.replace(/\^\//g, 'root')
     }
 
     try {
@@ -36,7 +36,7 @@ app.post('/', (req, res) => {
 
         if (input.match(/root/g)) {
             console.log('replacing root with ^/');
-            input = input.replaceAll('root', '^/')
+            input = input.replace(/root/g, '^/')
         }
 
         console.log(output);
