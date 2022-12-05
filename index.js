@@ -30,9 +30,9 @@ app.post('/', (req, res) => {
         if (input == 0) throw new Error
         let output = eval(input)
 
-        if (input.match(/root/g)) {
-            input = input.replace(/root/g, '^/')
-        }
+        // if (input.match(/root/g)) {
+        //     input = input.replace(/root/g, '^/')
+        // }
 
         res.render(path.join(__dirname, '/views/output.ejs'), {'expression': input, 'result': output})
     } catch (error) {
